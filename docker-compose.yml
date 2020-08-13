@@ -1,0 +1,47 @@
+version: '3.4'
+
+services:
+  bus:
+    image: "rabbitmq:3-management"
+    container_name: rabbitmq
+    restart: on-failure
+    environment:
+        RABBITMQ_DEFAULT_USER: "user"
+        RABBITMQ_DEFAULT_PASS: "password"
+    ports:
+        - "5672:5672"
+        - "15672:15672"
+  publicapi.app:
+    image: ${DOCKER_REGISTRY-}publicapiapp
+    build:
+      context: .
+      dockerfile: PublicApi/PublicApi.App/Dockerfile
+    environment:    
+        - ASPNETCORE_URLS=https://+:443;http://+:80
+        - HealthChecksUI__HealthChecks__0__Name=Application
+        - HealthChecksUI__HealthChecks__0__Uri=https://localhost/hcapi
+        - HealthChecksUI__HealthChecks__1__Name=Airport service
+        - HealthChecksUI__HealthChecks__1__Uri=https://airportservice.app/hcapi
+    ports:
+        - "3330:80"
+        - "3331:443"
+    depends_on:
+        - bus
+  airportservice.app:
+    image: ${DOCKER_REGISTRY-}airportserviceapp
+    build:
+      context: .
+      dockerfile: Services/AirportService/AirportService.App/Dockerfile
+    environment:
+        - ASPNETCORE_URLS=https://+:443;http://+:80
+    ports:
+        - "4440:80"
+        - "4441:443"
+    depends_on:
+        - bus
+
+
+#- HealthChecksUI__HealthChecks__0__Name=Application
+#- HealthChecksUI__HealthChecks__0__Uri=http://publicapi.app:80/hc
+#- HealthChecksUI__HealthChecks__1__Name=BlazinPizza.Server HTTP Check
+#- HealthChecksUI__HealthChecks__1__Uri=http://airportservice.app:80/hc

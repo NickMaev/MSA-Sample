@@ -11,6 +11,7 @@ Web application based on microservice architecture.
 * Logging via [Serilog](https://github.com/serilog/serilog)
 * Object mapping via [Automapper](https://automapper.org/)
 * Healthchecks using [AspNetCore.Diagnostics.HealthChecks](https://github.com/Xabaril/AspNetCore.Diagnostics.HealthChecks)
+* [xUnit](https://xunit.net/) testing tool
 
 # Other tools
 * [CoordinateSharp](https://github.com/Tronald/CoordinateSharp) for geographic distance calculation between two points.
